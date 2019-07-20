@@ -1,0 +1,19 @@
+Why is filter shape the same?
+First, the kernel shape is the same merely to speed up computation. This allows to apply the convolution in a batch, for example using col2im transformation and matrix multiplication. This also makes it convenient to store all the weights in one multidimensional array. Though mathematically one can imagine using several filters of different shape.
+
+Some architectures, such as Inception network, use this idea and apply different convolutional layers (with different kernels) in parallel and in the end stack up the feature maps. This turned out to be very useful.
+
+Why isn't one filter enough?
+Because each filter is going to learn exactly one pattern that will excite it, e.g., Gabor-like vertical line. A single filter can't be equally excited by a horizontal and a vertical line. So to recognize an object, one such filter is not enough.
+
+For example, in order to recognize a cat, a neural network might need to recognize the eyes, the tail, ... of all which are composed of different lines and edges. The network can be confident about the object on the image if it can recognize a whole variety of different shapes and patterns in the image. This will be true even for a simple data set like MNIST.
+
+Why do filters learn different patterns?
+A simple analogy: imagine a linear regression network with one hidden layer. Each neuron in the hidden layer is connected to each input feature, so they are all symmetrical. But after some training, different neurons are going to learn different high-level features, which are useful to make a correct prediction.
+
+There's a catch: if the network is initialized with zeros, it's going to suffer from symmetry issues and in general won't converge to the target distribution. So it's essential to create asymmetry in the neurons from the very beginning and let different neurons get excited differently from the same input data. This in turn leads to different gradients getting applied to the weights, usually increasing the asymmetry even more. That's why different neurons are trained differently.
+
+It's important to mention another issue that is still possible with random init called co-adaptation: when different neurons learn to adapt and depend on each other. This problem has been solved by a dropout technique and later by batch normalization, essentially by adding noise to the training process, in various ways. Combining it together, neurons are much more likely to learn different latent representations of the data.
+
+Further links
+Highly recommend to read CS231n tutorial by Stanford to gain better intuition about convolutional neural networks.
